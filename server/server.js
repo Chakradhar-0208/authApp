@@ -28,11 +28,21 @@ mongoose
 app.use(express.json());
 app.use(
   cors({
-    origin: CLIENT_URL,
+    origin: function (origin, callback) {
+      const allowedOrigins = [
+        "http://localhost:5173",
+        "https://authenticator-app-cp.vercel.app",
+      ];
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
-    
   })
 );
+
 app.use(cookieParser());
 app.use("/signup", signupRoutes);
 app.use("/login", loginRoutes);
