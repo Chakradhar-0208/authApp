@@ -1,3 +1,6 @@
-node_modules
+# root or individual folders
 .env
+.env.development
+.env.production
+node_modules
 dist

@@ -13,6 +13,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { ModeToggle } from "./mode-toggle";
+
+const API_URL = import.meta.env.VITE_API_URL;
+
 const Signup = () => {
   const [formData, setFormData] = useState({
     name: "",
@@ -22,6 +25,7 @@ const Signup = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+
   useEffect(() => {
     document.title = "Signup!!";
   }, []);
@@ -38,7 +42,7 @@ const Signup = () => {
     setIsLoading(true);
 
     try {
-      const res = await fetch("http://localhost:3000/signup", {
+      const res = await fetch(`${API_URL}/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -60,6 +64,8 @@ const Signup = () => {
       }
     } catch (err) {
       console.error("SignUp Error", err);
+      const msg = document.getElementById("msg");
+      msg.innerText = "Something went wrong.";
     }
 
     setIsLoading(false);
@@ -70,7 +76,7 @@ const Signup = () => {
       <div className="absolute top-6 right-8">
         <ModeToggle />
       </div>
-      <Card className="w-[90dvw] min-w-[20rem]  sm:w-full max-w-sm">
+      <Card className="w-[90dvw] min-w-[20rem] sm:w-full max-w-sm">
         <CardHeader>
           <CardTitle>Create your account</CardTitle>
           <CardDescription>Fill in the form below to sign up.</CardDescription>
@@ -123,7 +129,7 @@ const Signup = () => {
           <CardFooter className="flex flex-col gap-2 mt-4">
             <p
               id="msg"
-              className=" text-center text-sm text-red-600 min-h-[1.25rem]"
+              className="text-center text-sm text-red-600 min-h-[1.25rem]"
             ></p>
             <Button type="submit" disabled={isLoading} className="w-full">
               {isLoading ? "Please wait..." : "Sign Up"}

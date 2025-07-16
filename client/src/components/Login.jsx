@@ -14,11 +14,15 @@ import {
 } from "@/components/ui/card";
 
 import { ModeToggle } from "./mode-toggle";
+
+const API_URL = import.meta.env.VITE_API_URL;
+
 const Login = ({ setIsLogged }) => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [isLoading, setIsLoading] = useState(false);
   const [msg, setMsg] = useState("");
   const navigate = useNavigate();
+
   useEffect(() => {
     document.title = "Login here";
   }, []);
@@ -36,7 +40,7 @@ const Login = ({ setIsLogged }) => {
     setMsg("");
 
     try {
-      const res = await fetch("http://localhost:3000/login", {
+      const res = await fetch(`${API_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -59,12 +63,13 @@ const Login = ({ setIsLogged }) => {
 
     setIsLoading(false);
   };
+
   return (
     <div className="flex flex-col justify-center h-[100dvh] items-center min-h-[500px]">
       <div className="absolute top-6 right-8">
         <ModeToggle />
       </div>
-      <Card className=" w-[90dvw] min-w-[20rem]  sm:w-full max-w-sm">
+      <Card className="w-[90dvw] min-w-[20rem] sm:w-full max-w-sm">
         <CardHeader>
           <CardTitle>Login to your account</CardTitle>
           <CardDescription>
@@ -105,7 +110,7 @@ const Login = ({ setIsLogged }) => {
           </CardContent>
 
           <CardFooter className="flex-col mt-4 gap-1">
-            <p className="text-red-700  min-h-[1.5rem] text-sm">{msg}</p>
+            <p className="text-red-700 min-h-[1.5rem] text-sm">{msg}</p>
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? "Logging In..." : "Login"}
             </Button>
