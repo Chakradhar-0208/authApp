@@ -85,16 +85,19 @@ const Home = ({ setIsLogged }) => {
     }
   };
   if (isLoading) {
-      return (
-    <div className="flex flex-col justify-center items-center h-screen">
-      <div className="flex absolute top-6 right-8 space-x-5">
-        <ModeToggle />
-        <Button>Logout</Button>
+    return (
+      <div className="flex flex-col justify-center items-center h-screen">
+        <div className="flex absolute top-6 right-8 space-x-5">
+          <ModeToggle />
+          <Button>Logout</Button>
+        </div>
+        <div className="absolute flex flex-col items-center
+         justify-center">
+          <Skeleton className="w-40 h-4 mb-2" />
+          <Skeleton className="w-30 h-4 mb-2" />
+        </div>
       </div>
-      <Skeleton className="w-40 h-4 mb-2" />
-      <Skeleton className="w-30 h-4 mb-2" />
-    </div>
-  );
+    );
   }
 
   return (
