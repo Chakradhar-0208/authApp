@@ -29,7 +29,7 @@ mongoose
 app.use(express.json());
 app.use(
   cors({
-    origin: CLIENT_URL,
+    origin: "https://authenticator-app-cp.vercel.app",
     credentials: true,
   })
 );
