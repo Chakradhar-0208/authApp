@@ -51,7 +51,9 @@ const Login = ({ setIsLogged }) => {
       if (res.status === 201) {
         setMsg(data.message);
         setIsLogged(true);
-        navigate("/");
+        // navigate("/");
+        console.log("using location.href")
+          window.location.href = "/";
       } else {
         setMsg(data.message);
       }
