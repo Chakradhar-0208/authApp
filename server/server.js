@@ -15,16 +15,15 @@ dotenv.config();
 const app = express();
 const mongoURI = process.env.MONGO_URI;
 const port = process.env.PORT 
-const CLIENT_URL = process.env.CLIENT_ORIGIN;
+const CLIENT_URL = process.env.CLIENT_URL;
 mongoose
-  .connect(process.env.MONGO_URI, {
+  .connect(MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     dbName: "authApp",
   })
   .then(() => console.log("✅ MongoDB connected"))
   .catch((err) => console.error("❌ MongoDB connection error:", err));
-
 
 app.use(express.json());
 app.use(
@@ -35,14 +34,12 @@ app.use(
 );
 app.use(cookieParser());
 app.use("/signup", signupRoutes);
-app.use("/login", loginRoutes); 
+app.use("/login", loginRoutes);
 app.use("/logout", logoutRoute);
 
 app.get("/", (req, res) => {
   res.status(201).json({ message: "Gotcha!!!" });
 });
-
-
 
 app.get("/getUserData", verifyToken, async (req, res) => {
   try {
