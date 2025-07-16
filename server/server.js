@@ -13,9 +13,9 @@ import jwt from "jsonwebtoken";
 dotenv.config();
 
 const app = express();
-const mongoURI = process.env.MONGO_URI;
-const port = process.env.PORT 
-const CLIENT_URL = process.env.CLIENT_URL;
+const MONGO_URI = process.env.MONGO_URI;
+const port = process.env.PORT;
+const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:5173";
 mongoose
   .connect(MONGO_URI, {
     useNewUrlParser: true,
@@ -28,7 +28,7 @@ mongoose
 app.use(express.json());
 app.use(
   cors({
-    origin: "https://authenticator-app-cp.vercel.app",
+    origin: CLIENT_URL,
     credentials: true,
     
   })
