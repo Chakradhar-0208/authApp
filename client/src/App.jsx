@@ -65,16 +65,7 @@ function LoadingSkeleton({ path }) {
     );
   }
 
-  return (
-    <div className="flex flex-col justify-center items-center h-screen">
-      <div className="flex absolute top-6 right-8 space-x-5">
-        <ModeToggle />
-        <Button>Logout</Button>
-      </div>
-      <Skeleton className="w-40 h-4 mb-2" />
-      <Skeleton className="w-30 h-4 mb-2" />
-    </div>
-  );
+
 }
 
 function AppRouter({ isLogged, setIsLogged }) {
