@@ -12,9 +12,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-
 import { ModeToggle } from "./mode-toggle";
-import { Skeleton } from "./ui/skeleton";
+
 const API_URL = import.meta.env.VITE_API_URL;
 
 const Login = ({ setIsLogged }) => {
@@ -24,7 +23,7 @@ const Login = ({ setIsLogged }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    document.title = "Login here";
+    document.title = "Login | Authenticator App";
   }, []);
 
   const handleChange = (e) => {

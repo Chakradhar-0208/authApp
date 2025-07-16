@@ -27,7 +27,7 @@ const Signup = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    document.title = "Signup!!";
+    document.title = "Signup | Authenticator App";
   }, []);
 
   const handleChange = (e) => {
@@ -55,10 +55,8 @@ const Signup = () => {
 
       if (res.status === 201) {
         msg.innerText = "Redirecting to Login Page...";
-        setTimeout(() => {
-          setIsLoading(false);
-          navigate("/login");
-        }, 1500);
+        setIsLoading(false);
+        navigate("/login");
       } else {
         msg.innerText = data.message;
       }
