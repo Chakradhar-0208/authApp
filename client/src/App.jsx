@@ -12,8 +12,8 @@ function App() {
   useEffect(() => {
     const checkLogin = async () => {
       try {
-        const res = await fetch("http://localhost:3000/check-login", {
-          credentials: "include",
+        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/check-login`, {
+      credentials: "include",
         });
         setIsLogged(res.status === 201);
       } catch (err) {

@@ -9,27 +9,30 @@ import dotenv from "dotenv";
 import verifyToken from "./middleware/auth.js";
 import User from "./models/models.js";
 import jwt from "jsonwebtoken";
-import multer from "multer";
-import fs from 'fs'
 
 dotenv.config();
 
 const app = express();
 const mongoURI = process.env.MONGO_URI;
-const port = process.env.PORT || 3000;
+const port = process.env.PORT 
+const CLIENT_URL = process.env.CLIENT_URL;
 mongoose
-  .connect(mongoURI)
-  .then(() => console.log("✅ Connected to MongoDB"))
+  .connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    dbName: "authApp",
+  })
+  .then(() => console.log("✅ MongoDB connected"))
   .catch((err) => console.error("❌ MongoDB connection error:", err));
+
 
 app.use(express.json());
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: URL,
     credentials: true,
   })
 );
-app.use('/uploads', express.static('uploads'))
 app.use(cookieParser());
 app.use("/signup", signupRoutes);
 app.use("/login", loginRoutes); 
@@ -39,23 +42,6 @@ app.get("/", (req, res) => {
   res.status(201).json({ message: "Gotcha!!!" });
 });
 
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/'); 
-  },
-  filename: (req, file, cb) => {
-    const uniqueName = Date.now() + '-' + file.originalname;
-    cb(null, uniqueName);
-  },
-});
-
-const upload = multer({ storage });
-
-app.post('/upload',upload.single('file'),(req,res)=>{
-  if(!req.file) return res.status(400).send('No file uploaded.')
-  res.json({fileName:req.file.filename,path: `/uploads/${req.file.filename}`,})
-})
 
 
 app.get("/getUserData", verifyToken, async (req, res) => {
@@ -84,6 +70,6 @@ app.get("/check-login", (req, res) => {
   }
 });
 
-app.listen(port, "0.0.0.0", (err) => {
-  console.log(`Server running at http://localhost:${port}`);
+app.listen(port, () => {
+  console.log(`🚀 Server listening on port ${port}`);
 });

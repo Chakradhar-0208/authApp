@@ -6,11 +6,11 @@ router.get("/", (req, res) => {
   res.clearCookie("token", {
     path: "/",
     httpOnly: true,
-    sameSite: "Lax",
-    secure: false,
+    sameSite: "None", 
+    secure: true,     
   });
 
-  return res.status(201).json({ message: "User Logged out Successfully!!" });
+  return res.status(200).json({ message: "User logged out successfully!" });
 });
 
 export default router;
