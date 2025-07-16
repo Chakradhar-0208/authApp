@@ -29,7 +29,7 @@ mongoose
 app.use(express.json());
 app.use(
   cors({
-    origin: URL,
+    origin: CLIENT_URL,
     credentials: true,
   })
 );
