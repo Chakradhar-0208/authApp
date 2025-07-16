@@ -30,6 +30,7 @@ app.use(
   cors({
     origin: "https://authenticator-app-cp.vercel.app",
     credentials: true,
+    
   })
 );
 app.use(cookieParser());
