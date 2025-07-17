@@ -19,8 +19,7 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 const MONGO_URI = process.env.MONGO_URI;
-const port = process.env.PORT;
-const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:5173";
+const port = process.env.PORT || 5000;
 
 const allowedOrigins = [
   "http://localhost:5173",
@@ -28,49 +27,41 @@ const allowedOrigins = [
   "https://authenticationappfrontend.onrender.com",
 ];
 
-app.options(
-  "*",
-  cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true,
-  }),
-  (req, res) => {
-    res.set("Access-Control-Max-Age", "0");
-    res.sendStatus(204);
-  }
-);
+// CORS setup
+app.options("*", cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+}), (req, res) => {
+  res.set("Access-Control-Max-Age", "0");
+  res.sendStatus(204);
+});
 
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true,
-  })
-);
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+}));
+
 app.use(express.json());
 app.use(cookieParser());
 
+// Routes
 app.use("/signup", signupRoutes);
 app.use("/login", loginRoutes);
 app.use("/logout", logoutRoute);
 
-app.use(express.static(path.join(__dirname, "dist")));
-
-app.get("/*", (req, res) => {
-  res.sendFile(path.join(__dirname, "dist", "index.html"));
-});
-
+// MongoDB connection
 mongoose
   .connect(MONGO_URI, {
     useNewUrlParser: true,
@@ -80,6 +71,7 @@ mongoose
   .then(() => console.log("✅ MongoDB connected"))
   .catch((err) => console.error("❌ MongoDB connection error:", err));
 
+// API routes
 app.get("/getUserData", verifyToken, async (req, res) => {
   try {
     const user = await User.findById(req.userId).select("-password");
@@ -103,8 +95,11 @@ app.get("/check-login", (req, res) => {
   }
 });
 
-app.get("/", (req, res) => {
-  res.status(200).json({ message: "Gotcha!!!" });
+// Serve frontend build
+app.use(express.static(path.join(__dirname, "dist")));
+
+app.get("/*", (req, res) => {
+  res.sendFile(path.join(__dirname, "dist", "index.html"));
 });
 
 app.listen(port, () => {
