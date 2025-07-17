@@ -20,8 +20,8 @@ const allowedOrigins = [
   "http://localhost:5173",
   "https://authenticator-app-cp.vercel.app",
   "https://authenticationappfrontend.onrender.com",
+  "https://auth-app-git-ios-token-support-chakradhar-0208s-projects.vercel.app", // ✅ new one
 ];
-
 app.use(
   cors({
     origin: function (origin, callback) {
