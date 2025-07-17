@@ -53,7 +53,7 @@ const Signup = () => {
       const data = await res.json();
       const msg = document.getElementById("msg");
 
-      if (res.status === 201) {
+      if (res.status === 200) {
         msg.innerText = "Redirecting to Login Page...";
         setIsLoading(false);
         navigate("/login");

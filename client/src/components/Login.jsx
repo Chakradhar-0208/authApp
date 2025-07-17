@@ -48,12 +48,10 @@ const Login = ({ setIsLogged }) => {
 
       const data = await res.json();
 
-      if (res.status === 201) {
+      if (res.status === 200) {
         setMsg(data.message);
         setIsLogged(true);
-        // navigate("/");
-        console.log("using location.href")
-          window.location.href = "/";
+        navigate("/");
       } else {
         setMsg(data.message);
       }
