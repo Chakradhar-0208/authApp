@@ -1,50 +1,59 @@
 import express from "express";
 import mongoose from "mongoose";
-import cors from "cors";
-import cookieParser from "cookie-parser";
-import dotenv from "dotenv";
-import path from "path";
-import { fileURLToPath } from "url";
 import signupRoutes from "./Routes/signup.js";
 import loginRoutes from "./Routes/login.js";
 import logoutRoute from "./Routes/logout.js";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import dotenv from "dotenv";
 import verifyToken from "./middleware/auth.js";
 import User from "./models/models.js";
 import jwt from "jsonwebtoken";
 
 dotenv.config();
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 const app = express();
-
 const MONGO_URI = process.env.MONGO_URI;
-const PORT = process.env.PORT || 8080;
+const port = process.env.PORT || 5000;
 
 const allowedOrigins = [
   "http://localhost:5173",
   "https://authenticator-app-cp.vercel.app",
-  "https://authenticationappfrontend.onrender.com"
+  "https://authenticationappfrontend.onrender.com",
 ];
 
-app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
 
 app.use(express.json());
 app.use(cookieParser());
 
-// API Routes
+mongoose
+  .connect(MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    dbName: "authApp",
+  })
+  .then(() => console.log("✅ MongoDB connected"))
+  .catch((err) => console.error("❌ MongoDB connection error:", err));
+
 app.use("/signup", signupRoutes);
 app.use("/login", loginRoutes);
 app.use("/logout", logoutRoute);
+
+app.get("/", (req, res) => {
+  res.status(200).json({ message: "Gotcha!!!" });
+});
 
 app.get("/getUserData", verifyToken, async (req, res) => {
   try {
@@ -69,28 +78,6 @@ app.get("/check-login", (req, res) => {
   }
 });
 
-app.get("/api-status", (req, res) => {
-  res.status(200).json({ message: "API is running" });
-});
-
-// Serve static frontend
-app.use(express.static(path.join(__dirname, "dist")));
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "dist", "index.html"));
-});
-
-// Connect DB and Start Server
-mongoose.connect(MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  dbName: "authApp"
-})
-.then(() => {
-  console.log("✅ MongoDB connected");
-  app.listen(PORT, () => {
-    console.log(`🚀 Server listening on port ${PORT}`);
-  });
-})
-.catch((err) => {
-  console.error("❌ MongoDB connection error:", err);
+app.listen(port, () => {
+  console.log(`🚀 Server listening on port ${port}`);
 });
