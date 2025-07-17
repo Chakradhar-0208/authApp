@@ -108,12 +108,32 @@ function App() {
   useEffect(() => {
     const checkLogin = async () => {
       try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/check-login`, {
-          credentials: "include",
-        });
+        // const res = await fetch(`${import.meta.env.VITE_API_URL}/check-login`, {
+        //   credentials: "include",
+        // });
+
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+let options = {
+  method: "GET",
+  credentials: "include",
+};
+
+if (isIOS) {
+  const token = localStorage.getItem("authToken");
+  if (token) {
+    options.headers = {
+      Authorization: `Bearer ${token}`,
+    };
+    options.credentials = undefined;
+  }
+}
+
+const res = await fetch(`${import.meta.env.VITE_API_URL}/check-login`, options);
+
+
         const data = await res.json();
         setTimeout(() => {
-          setIsLogged(res.status === 201 && data?.message?.includes("true"));
+          setIsLogged(res.status === 200 && data?.message?.includes("true"));
         }, 500);
       } catch (err) {
         console.error("Check-login failed:", err);

@@ -25,65 +25,162 @@ const Home = ({ setIsLogged }) => {
     checkLogin();
   }, []);
 
-  const getUserData = async () => {
-    try {
-      setIsLoading(true);
-      const response = await fetch(`${API_URL}/getUserData`, {
-        credentials: "include",
-        method: "GET",
-      });
-      if (!response.ok) throw new Error(`Status: ${response.status}`);
+  // const getUserData = async () => {
+  //   try {
+  //     setIsLoading(true);
+  //     const response = await fetch(`${API_URL}/getUserData`, {
+  //       credentials: "include",
+  //       method: "GET",
+  //     });
+  //     if (!response.ok) throw new Error(`Status: ${response.status}`);
 
-      const data = await response.json();
-      setUserData(data.user);
-      setIsLoading(false);
-    } catch (err) {
-      console.error(err);
-      setIsLoading(false);
+  //     const data = await response.json();
+  //     setUserData(data.user);
+  //     setIsLoading(false);
+  //   } catch (err) {
+  //     console.error(err);
+  //     setIsLoading(false);
+  //   }
+  // };
+
+  // const checkLogin = () => {
+  //   fetch(`${API_URL}/check-login`, { credentials: "include" })
+  //     .then((res) => res.json())
+  //     .then((data) => {
+  //       if (data.message === "User Logged in false") {
+  //         console.log("User logged out, redirecting to /login");
+
+  //         setIsLogged(false);
+
+  //         navigate("/login");
+  //       } else {
+  //         setIsLogged(true);
+
+  //         console.log("User logged in");
+  //         getUserData();
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       console.error("Login check failed:", err);
+
+  //       setIsLogged(false);
+
+  //       navigate("/login");
+  //     });
+  // };
+
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+
+const checkLogin = async () => {
+  try {
+    const options = {
+      method: "GET",
+      credentials: "include",
+    };
+
+    if (isIOS) {
+      const token = localStorage.getItem("authToken");
+      if (token) {
+        options.headers = {
+          Authorization: `Bearer ${token}`,
+        };
+        options.credentials = undefined;
+      }
     }
-  };
 
-  const checkLogin = () => {
-    fetch(`${API_URL}/check-login`, { credentials: "include" })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.message === "User Logged in false") {
-          console.log("User logged out, redirecting to /login");
+    const res = await fetch(`${API_URL}/check-login`, options);
+    const data = await res.json();
 
-          setIsLogged(false);
-
-          navigate("/login");
-        } else {
-          setIsLogged(true);
-
-          console.log("User logged in");
-          getUserData();
-        }
-      })
-      .catch((err) => {
-        console.error("Login check failed:", err);
-
-        setIsLogged(false);
-
-        navigate("/login");
-      });
-  };
-
-  const handleLogout = async () => {
-    try {
-      const loggedRes = await fetch(`${API_URL}/logout`, {
-        method: "GET",
-        credentials: "include",
-      });
-      const data = await loggedRes.json();
-
+    if (data.message === "User Logged in false") {
       setIsLogged(false);
-
-      checkLogin();
-    } catch (err) {
-      console.error("Logout failed:", err);
+      navigate("/login");
+    } else {
+      setIsLogged(true);
+      getUserData();
     }
-  };
+  } catch (err) {
+    console.error("Login check failed:", err);
+    setIsLogged(false);
+    navigate("/login");
+  }
+};
+
+const getUserData = async () => {
+  try {
+    setIsLoading(true);
+
+    const options = {
+      method: "GET",
+      credentials: "include",
+    };
+
+    if (isIOS) {
+      const token = localStorage.getItem("authToken");
+      if (token) {
+        options.headers = {
+          Authorization: `Bearer ${token}`,
+        };
+        options.credentials = undefined;
+      }
+    }
+
+    const response = await fetch(`${API_URL}/getUserData`, options);
+    if (!response.ok) throw new Error(`Status: ${response.status}`);
+
+    const data = await response.json();
+    setUserData(data.user);
+    setIsLoading(false);
+  } catch (err) {
+    console.error(err);
+    setIsLoading(false);
+  }
+};
+
+
+
+  // const handleLogout = async () => {
+  //   try {
+  //     const loggedRes = await fetch(`${API_URL}/logout`, {
+  //       method: "GET",
+  //       credentials: "include",
+  //     });
+  //     const data = await loggedRes.json();
+
+  //     setIsLogged(false);
+
+  //     checkLogin();
+  //   } catch (err) {
+  //     console.error("Logout failed:", err);
+  //   }
+  // };
+
+const handleLogout = async () => {
+  try {
+    const options = {
+      method: "GET",
+      credentials: "include",
+    };
+
+    if (isIOS) {
+      const token = localStorage.getItem("authToken");
+      if (token) {
+        options.headers = {
+          Authorization: `Bearer ${token}`,
+        };
+        options.credentials = undefined;
+      }
+      localStorage.removeItem("authToken");
+    }
+
+    await fetch(`${API_URL}/logout`, options);
+    setIsLogged(false);
+    navigate("/login");
+  } catch (err) {
+    console.error("Logout failed:", err);
+  }
+};
+
+
   if (isLoading) {
     return (
       <div className="flex flex-col justify-center items-center h-screen">

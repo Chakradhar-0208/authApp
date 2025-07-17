@@ -48,11 +48,27 @@ const Login = ({ setIsLogged }) => {
 
       const data = await res.json();
 
+      // if (res.status === 200) {
+      //   setMsg(data.message);
+      //   setIsLogged(true);
+      //   navigate("/");
+      // }
+
       if (res.status === 200) {
-        setMsg(data.message);
-        setIsLogged(true);
-        navigate("/");
-      } else {
+  // If on iOS, extract token manually
+  const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+  const isIOS = /iPad|iPhone|iPod/.test(userAgent);
+
+  if (isIOS && data?.token) {
+    localStorage.setItem("authToken", data.token);
+  }
+
+  setMsg(data.message);
+  setIsLogged(true);
+  navigate("/");
+}
+
+       else {
         setMsg(data.message);
       }
     } catch (err) {
